@@ -1,0 +1,38 @@
+{
+    "name": "fliq/ipfs",
+    "description": "ipfs api library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Pav",
+            "email": "_@christians.email",
+            "homepage": "https://fliqnft.com"
+        }
+    ],
+    "homepage": "https://github.com/fliq/ipfs",
+    "keywords": ["Ipfs", "Web3", "Blockchain", "Decentralization"],
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~7",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-watch": "1.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fliq\\Ipfs\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fliq\\Ipfs\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
