@@ -3,18 +3,15 @@
 //uses(TestCase::class)->in('./');
 
 
+use Fliq\Ipfs\Ipfs;
 use GuzzleHttp\Client;
 
-function api() : Client
+function api() : Ipfs
 {
-    return new Client([
-        'base_uri' => "http://localhost:5001/api/v0/"
-    ]);
+    return new Ipfs(mode: 'api');
 }
 
-function gateway() : Client
+function gateway() : Ipfs
 {
-    return new Client([
-        'base_uri' => "http://localhost:8080/api/v0/"
-    ]);
+    return new Ipfs();
 }

@@ -2,6 +2,7 @@
 
 namespace Fliq\Ipfs\Commands;
 
+use Fliq\Ipfs\Ipfs;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
@@ -10,7 +11,7 @@ use GuzzleHttp\Psr7\Response;
 class Add
 {
 
-    public function __construct(protected Client $client, array $options = [])
+    public function __construct(protected Ipfs $client, array $options = [])
     {
         $this->options = array_merge([
             'cid-version' => '1',
@@ -19,7 +20,7 @@ class Add
 
     public function handle(...$resources) : PromiseInterface
     {
-        $promise = $this->client->postAsync('add', [
+        $promise = $this->client->call('add', [
             'multipart' => $this->build($resources),
             'query'     => $this->options,
         ]);

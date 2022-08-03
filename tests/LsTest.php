@@ -4,12 +4,9 @@
 use Fliq\Ipfs\Commands\Ls;
 use Fliq\Ipfs\Ipfs;
 
-beforeEach(function() {
-    $this->ipfs = new Ipfs();
-});
 
 it('lists files', function () {
-    $response = $this->ipfs->add(
+    $response = api()->add(
         ['foo.txt' => 'foo'],
         ['wrap-with-directory' => true]
     )->wait()[1];

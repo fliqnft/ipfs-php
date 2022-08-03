@@ -6,8 +6,7 @@ use Fliq\Ipfs\Ipfs;
 use GuzzleHttp\Psr7\Stream;
 
 it('reads a file', function () {
-    $ipfs = new Ipfs();
-    $file = $ipfs->add('Hello, IPFS')->wait()[0];
+    $file = api()->add('Hello, IPFS')->wait()[0];
 
     $command = new Cat(gateway());
 
@@ -19,8 +18,7 @@ it('reads a file', function () {
 
 
 it('reads a file in a folder', function () {
-    $ipfs = new Ipfs();
-    $dir  = $ipfs->add(
+    $dir  = api()->add(
         ['hello.txt' => 'Hello, IPFS'],
         ['wrap-with-directory' => true]
     )->wait()[1]; // the last item is the dir

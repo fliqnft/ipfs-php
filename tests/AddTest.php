@@ -6,7 +6,7 @@ use Fliq\Ipfs\Ipfs;
 use GuzzleHttp\Psr7\Utils;
 
 beforeEach(function () {
-    $this->ipfs = new Ipfs();
+    $this->ipfs = api();
 });
 
 it('adds from a string', function () {

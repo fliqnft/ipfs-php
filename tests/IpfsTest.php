@@ -4,7 +4,6 @@
 use Fliq\Ipfs\Ipfs;
 
 test('version', function () {
-
     $ipfs = new Ipfs();
 
     $response = $ipfs->version()->wait();
@@ -20,7 +19,7 @@ test('version', function () {
 });
 
 test('add', function () {
-    $ipfs = new Ipfs();
+    $ipfs = api();
 
     $response = $ipfs->add('Hello, IPFS')->wait();
 
@@ -30,7 +29,7 @@ test('add', function () {
 test('cat', function () {
     $ipfs = new Ipfs();
 
-    $file = $ipfs->add('Hello, IPFS')->wait()[0];
+    $file = api()->add('Hello, IPFS')->wait()[0];
 
     $text = $ipfs->cat($file['Hash'])->wait();
 
@@ -41,7 +40,7 @@ test('cat', function () {
 test('ls', function () {
     $ipfs = new Ipfs();
 
-    $dir = $ipfs->add(['hello.txt' => 'Hello, IPFS'], ['wrap-with-directory' => true])->wait()[1];
+    $dir = api()->add(['hello.txt' => 'Hello, IPFS'], ['wrap-with-directory' => true])->wait()[1];
 
     $list = $ipfs->ls($dir['Hash'])->wait();
 

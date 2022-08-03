@@ -2,13 +2,14 @@
 
 namespace Fliq\Ipfs\Commands;
 
+use Fliq\Ipfs\Ipfs;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 
 class Ls
 {
 
-    public function __construct(protected Client $client)
+    public function __construct(protected Ipfs $client)
     {
 
     }
@@ -19,7 +20,7 @@ class Ls
             $args = ['arg' => $args];
         }
 
-        return $this->client->getAsync('ls', [
+        return $this->client->call('ls', [
             'query' => $args,
         ])->then(function (Response $response) {
             return json_decode(

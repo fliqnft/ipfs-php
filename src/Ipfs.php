@@ -16,37 +16,49 @@ use Illuminate\Support\Facades\Http;
 
 class Ipfs
 {
-    protected Client $api;
-    protected Client $gateway;
+    protected Client $client;
+    protected string $method;
 
     public function __construct(
         string $host = 'localhost',
-        string $gatewayPort = '8080',
-        string $apiPort = '5001',
+        string $port = null,
         string $protocol = 'http',
+        public string $mode = 'gateway',
     ) {
-        $this->api = new Client([
-            'base_uri' => "{$protocol}://{$host}:{$apiPort}/api/v0/"
-        ]);
+        $this->method = match ($this->mode) {
+            'api'     => 'POST',
+            'gateway' => 'GET',
+            default   => throw new IpfsApiException('mode must be api or gateway'),
+        };
 
-        $this->gateway = new Client([
-            'base_uri' => "{$protocol}://{$host}:{$gatewayPort}/api/v0/"
+        $port = $port ?? match ($this->mode) {
+                'api'     => '5001',
+                'gateway' => '8080',
+            };
+
+        $this->client = new Client([
+            'base_uri' => "{$protocol}://{$host}:{$port}/api/v0/"
         ]);
     }
 
     public function version() : Promise\PromiseInterface
     {
-        return $this->gateway->getAsync('version')->then(function ($response) {
+        return $this->client->requestAsync($this->method, 'version')->then(function ($response) {
             return json_decode($response->getBody()->getContents(), JSON_OBJECT_AS_ARRAY);
         });
     }
 
     /**
      * https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-add
+     * @throws IpfsApiException
      */
     public function add($resource, array $options = []) : Promise\PromiseInterface
     {
-        $command = new Add($this->api, $options);
+        if ($this->mode != 'api') {
+            throw new IpfsApiException('Must be in API mode to add files');
+        }
+
+        $command = new Add($this, $options);
 
         return $command->handle($resource);
     }
@@ -58,7 +70,7 @@ class Ipfs
      */
     public function cat(mixed $args) : Promise\PromiseInterface
     {
-        $command = new Cat($this->gateway);
+        $command = new Cat($this);
 
         return $command->handle($args);
     }
@@ -89,23 +101,13 @@ class Ipfs
 
     public function ls(mixed $args) : Promise\PromiseInterface
     {
-        $command = new Ls($this->gateway);
+        $command = new Ls($this);
 
         return $command->handle($args);
     }
 
-
-    public function apiCall(string $uri, array $options = []) : Promise\PromiseInterface
+    public function call(string $uri, array $options = []) : Promise\PromiseInterface
     {
-        return $this->api->postAsync($uri, $options)->then(function ($response) {
-            return $response->getBody();
-        });
-    }
-
-    public function gatewayCall(string $uri, array $options = []) : Promise\PromiseInterface
-    {
-        return $this->gateway->getAsync($uri, $options)->then(function ($response) {
-            return $response->getBody();
-        });
+        return $this->client->requestAsync($this->method, $uri, $options);
     }
 }
