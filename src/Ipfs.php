@@ -49,7 +49,19 @@ class Ipfs
     }
 
     /**
-     * https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-add
+     * Adds files to IPFS.
+     *
+     * Can upload multiple files use array keys as file names.
+     * arrays will be json encoded and uploaded as a string.
+     * example:
+     *
+     * $ipfs->add(['file.json' => ['key' => 'value']]);
+     *
+     * reference: https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-add
+     *
+     * @param string|array|resource $resource
+     * @param array $options
+     *
      * @throws IpfsApiException
      */
     public function add($resource, array $options = []) : Promise\PromiseInterface
@@ -101,11 +113,16 @@ class Ipfs
 
     public function ls(mixed $args) : Promise\PromiseInterface
     {
-        $command = new Ls($this);
 
+        $command = new Ls($this);
         return $command->handle($args);
     }
 
+    /**
+     * @param  string  $uri
+     * @param  array  $options
+     * @return Promise\PromiseInterface
+     */
     public function call(string $uri, array $options = []) : Promise\PromiseInterface
     {
         return $this->client->requestAsync($this->method, $uri, $options);
